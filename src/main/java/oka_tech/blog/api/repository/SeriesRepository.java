@@ -9,4 +9,6 @@ public interface SeriesRepository extends JpaRepository<Series, Long> {
 
     List<Series> findAllByOrderByCreatedAtDesc();
 
+    List<Series> findSeriesByTitle(String title);
+
 }
