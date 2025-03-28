@@ -12,7 +12,6 @@ import static oka_tech.blog.api.entity.QTag.*;
 @Repository
 @RequiredArgsConstructor
 public class TagJpaRepository {
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
     public List<String> getTags(){

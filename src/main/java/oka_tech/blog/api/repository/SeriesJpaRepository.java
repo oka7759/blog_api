@@ -6,19 +6,16 @@ import lombok.RequiredArgsConstructor;
 
 import oka_tech.blog.api.dto.QSeriesDto;
 import oka_tech.blog.api.dto.SeriesDto;
-import oka_tech.blog.api.entity.Series;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static oka_tech.blog.api.entity.QPost.post;
 import static oka_tech.blog.api.entity.QSeries.series;
 
 
 @Repository
 @RequiredArgsConstructor
 public class SeriesJpaRepository {
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
 
