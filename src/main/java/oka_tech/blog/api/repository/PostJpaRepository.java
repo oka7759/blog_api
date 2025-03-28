@@ -57,7 +57,6 @@ public class PostJpaRepository {
         List<Post> result = queryFactory
                 .selectFrom(post)
                 .leftJoin(post.tags, tag).fetchJoin()
-                .groupBy(post.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()).fetch();
 

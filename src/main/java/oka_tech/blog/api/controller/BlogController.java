@@ -10,18 +10,16 @@ import oka_tech.blog.api.repository.TagJpaRepository;
 import oka_tech.blog.api.service.SeriesService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/blog")
-@Slf4j
+@CrossOrigin(origins = "*", methods = RequestMethod.GET)
 public class BlogController {
 
     private final PostJpaRepository postJpaRepository;
