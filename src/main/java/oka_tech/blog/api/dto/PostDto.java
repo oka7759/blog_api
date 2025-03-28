@@ -2,6 +2,7 @@ package oka_tech.blog.api.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
+import oka_tech.blog.api.entity.Post;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,16 +27,15 @@ public class PostDto {
 
     private List<TagDto> tags = new ArrayList<>();
 
-    @QueryProjection
-    public PostDto(Long id, String title, String content, Long views, String imageUrl, String description, LocalDateTime createdAt, List<TagDto> tags) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.views = views;
-        this.imageUrl = imageUrl;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.tags = tags;
+    public PostDto(Post post) {
+        id = post.getId();
+        title = post.getTitle();
+        content = post.getContent();
+        views = post.getViews();
+        imageUrl = post.getImageUrl();
+        description = post.getDescription();
+        createdAt = post.getCreatedAt();
+        post.getTags().forEach(tag -> tags.add(new TagDto(tag.getId(), tag.getName())));
     }
 
 

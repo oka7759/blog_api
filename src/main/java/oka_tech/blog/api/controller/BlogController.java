@@ -2,10 +2,7 @@ package oka_tech.blog.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import oka_tech.blog.api.dto.PostDto;
-import oka_tech.blog.api.dto.SearchResp;
-import oka_tech.blog.api.dto.SeriesDto;
-import oka_tech.blog.api.dto.SeriesResp;
+import oka_tech.blog.api.dto.*;
 import oka_tech.blog.api.entity.Series;
 import oka_tech.blog.api.repository.PostJpaRepository;
 import oka_tech.blog.api.repository.SeriesRepository;
@@ -35,6 +32,7 @@ public class BlogController {
 
     @GetMapping("/all")
     public Page<PostDto> postList(Pageable pageable) {
+        log.info("pageable: {}", pageable);
         return postJpaRepository.searchPage(pageable);
     }
 
@@ -55,7 +53,7 @@ public class BlogController {
     }
 
     @GetMapping("/tags")
-    public List<String> tagList() {
+    public List<TagsDto> tagList() {
         return tagJpaRepository.getTags();
     }
 
