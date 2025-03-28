@@ -1,0 +1,29 @@
+server.shutdown: graceful
+spring:
+  lifecycle.timeout-per-shutdown-phase: 10s
+  datasource:
+    url: jdbc:mysql://db:3306/blog?useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    username: jung3117
+    password: wjddjrghk1
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    web: INFO
+  file:
+    name: /var/log/api.log
+    path: ../logs
+  logback.rollingpolicy:
+    file-name-pattern: "${LOG_PATH}/app.%d{yyyy-MM-dd}.%i.log"
+    max-history: 90
+    total-size-cap: 3GB
+
+
+domain: https://oka-tech.site

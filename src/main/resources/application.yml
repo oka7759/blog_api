@@ -1,0 +1,24 @@
+server.port: 8080
+server.compression:
+  enabled: true
+  mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+
+spring:
+  application:
+    name: api
+  profiles:
+    active: local
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    cache: false
+  servlet.multipart:
+    max-file-size: 200MB
+    max-request-size: 200MB
+    enabled: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
