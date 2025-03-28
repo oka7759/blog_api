@@ -87,7 +87,7 @@ public class PostJpaRepository {
         return queryFactory
                 .from(post)
                 .leftJoin(post.tags, tag)
-                .where(post.title.eq(title))
+                .where(post.title.likeIgnoreCase("%" + title + "%"))
                 .transform(
                         GroupBy.groupBy(post.id).list(
                                 buildPostDto()
