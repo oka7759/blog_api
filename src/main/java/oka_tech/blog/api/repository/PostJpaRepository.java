@@ -11,6 +11,8 @@ import oka_tech.blog.api.dto.QPostDto;
 import oka_tech.blog.api.dto.QPostDto_TagDto;
 
 import oka_tech.blog.api.entity.Post;
+import oka_tech.blog.api.exception.CustomException;
+import oka_tech.blog.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -45,8 +47,10 @@ public class PostJpaRepository {
                                     buildPostDto()
                             )
                     ).get(0);
+        }else {
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
-        return null;
+
     }
 
     public List<PostDto> findBySeriesId(Long id) {
