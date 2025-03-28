@@ -23,7 +23,7 @@ public class SeriesJpaRepository {
         return queryFactory
                 .select(new QSeriesDto(series))
                 .from(series)
-                .where(series.title.eq(title))
+                .where(series.title.likeIgnoreCase("%" + title + "%"))
                 .fetch();
     }
 
