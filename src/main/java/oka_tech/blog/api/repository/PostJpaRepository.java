@@ -1,14 +1,11 @@
 package oka_tech.blog.api.repository;
 
-import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import oka_tech.blog.api.dto.PostDto;
-import oka_tech.blog.api.dto.QPostDto;
-import oka_tech.blog.api.dto.QPostDto_TagDto;
 
 import oka_tech.blog.api.entity.Post;
 import oka_tech.blog.api.exception.CustomException;
@@ -20,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.function.Function;
 
 
 import static oka_tech.blog.api.entity.QPost.post;
@@ -38,15 +36,7 @@ public class PostJpaRepository {
         Post postEntity = em.find(Post.class, id);
         if (postEntity != null) {
             postEntity.increaseViews();
-            return queryFactory
-                    .from(post)
-                    .leftJoin(post.tags, tag)
-                    .where(post.id.eq(id))
-                    .transform(
-                            GroupBy.groupBy(post.id).list(
-                                    buildPostDto()
-                            )
-                    ).get(0);
+            return new PostDto(postEntity);
         }else {
             throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
@@ -54,73 +44,57 @@ public class PostJpaRepository {
     }
 
     public List<PostDto> findBySeriesId(Long id) {
-        return queryFactory
-                .from(post)
-                .leftJoin(post.tags, tag)
-                .where(post.series.id.eq(id))
-                .transform(
-                        GroupBy.groupBy(post.id).list(
-                                buildPostDto()
-                        )
-                );
+        List<Post> result = queryFactory
+                .selectFrom(post)
+                .leftJoin(post.tags, tag).fetchJoin()
+                .where(post.series.id.eq(id)).fetch();
+
+        return tagMapper(result,PostDto::new);
     }
 
 
     public Page<PostDto> searchPage(Pageable pageable) {
-        List<PostDto> contents = queryFactory
-                .from(post)
-                .leftJoin(post.tags, tag)
+        List<Post> result = queryFactory
+                .selectFrom(post)
+                .leftJoin(post.tags, tag).fetchJoin()
+                .groupBy(post.id)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .transform(
-                        GroupBy.groupBy(post.id).list(
-                                buildPostDto()
-                        )
-                );
+                .limit(pageable.getPageSize()).fetch();
+
+        List<PostDto> postDos = tagMapper(result,PostDto::new);
+
         JPAQuery<Long> count = queryFactory
                 .select(post.count())
                 .from(post);
-        return PageableExecutionUtils.getPage(contents,pageable,count::fetchOne);
+        return PageableExecutionUtils.getPage(postDos,pageable,count::fetchOne);
     }
 
     public List<PostDto> findPostByTitle(String title) {
-        return queryFactory
-                .from(post)
-                .leftJoin(post.tags, tag)
-                .where(post.title.likeIgnoreCase("%" + title + "%"))
-                .transform(
-                        GroupBy.groupBy(post.id).list(
-                                buildPostDto()
-                        )
-                );
+        List<Post> result = queryFactory
+                .selectFrom(post)
+                .leftJoin(post.tags, tag).fetchJoin()
+                .where(post.title.likeIgnoreCase("%" + title + "%")).fetch();
+
+        return tagMapper(result,PostDto::new);
+
     }
 
     public List<PostDto> findPostByTagName(String tagName) {
-        return queryFactory
+        List<Post> result = queryFactory
                 .selectFrom(post)
-                .leftJoin(post.tags, tag)
-                .where(tag.name.eq(tagName))
-                .transform(
-                        GroupBy.groupBy(post.id).list(
-                                buildPostDto()
-                        )
-                );
+                .leftJoin(post.tags, tag).fetchJoin()
+                .where(tag.name.eq(tagName)).fetch();
+
+        return tagMapper(result,PostDto::new);
+
     }
 
-
-
-    private QPostDto buildPostDto() {
-        return new QPostDto(
-                post.id,
-                post.title,
-                post.content,
-                post.views,
-                post.imageUrl,
-                post.description,
-                post.createdAt,
-                GroupBy.list(new QPostDto_TagDto(tag.id, tag.name))
-        );
+    private <T, R> List<R> tagMapper(List<T> list, Function<T, R> mapper) {
+        return list.stream()
+                .map(mapper)
+                .toList();
     }
+
 
 
 
